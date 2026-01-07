@@ -1,0 +1,14 @@
+# Dados (Pasta onde ficarão os arquivos da PRF)
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
