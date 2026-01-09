@@ -83,13 +83,29 @@ def process_silver():
                     df[col] = df[col].fillna(0).astype(int)
             
             # 9. Converter a data para o formato que o computador entenda como data real
-            # %d = dia, %m = mês, %Y = ano com 4 dígitos
-            df['data_inversa'] = pd.to_datetime(df['data_inversa'], format='%d/%m/%Y', errors='coerce')
+            # .astype(str) garante que tratamos como texto
+            # .str.strip() remove espaços em branco invisíveis no início ou fim
+            df['data_inversa'] = df['data_inversa'].astype(str).str.strip()
+            
+            # Tentativa 1: Conversão automática (o 'mixed' lida com diferentes formatos na mesma coluna)
+            try:
+                df['data_inversa'] = pd.to_datetime(df['data_inversa'], dayfirst=True, format='mixed', errors='coerce')
+            except:
+                # Tentativa 2: Se falhar, pega apenas os 10 primeiros caracteres (DD/MM/AAAA ou AAAA-MM-DD)
+                df['data_inversa'] = df['data_inversa'].str[:10]
+                df['data_inversa'] = pd.to_datetime(df['data_inversa'], dayfirst=True, errors='coerce')
         
             # 10. Salvar o resultado final na pasta Silver
             # Index=False evita que o pandas crie uma coluna extra de números
             df.to_parquet(caminho_saida, index=False)
             print(f"Sucesso! Arquivo {arquivo_saida} gerado.")
+        
+            # Verificação rápida no terminal para saber se datas foram convertidas da maneira correta
+            total_nat = df['data_inversa'].isna().sum()
+            if total_nat > 0:
+                print(f"Aviso: {total_nat} datas não foram convertidas no ano {ano_str}")
+            else:
+                print(f"Datas do ano {ano_str} convertidas com sucesso.")
 
         except Exception as e:
             print(f"Houve um erro no ano {ano_str} : {e}")
