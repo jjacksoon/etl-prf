@@ -6,15 +6,16 @@ Este projeto implementa um pipeline de dados (ETL) robusto para o processamento 
 
 O pipeline foi estruturado utilizando a **Medallion Architecture**, garantindo linhagem e qualidade dos dados em cada etapa do processo:
 
-1.  **Bronze (Raw):** Ingestão automatizada de arquivos CSV originais do portal de dados abertos da PRF.
+1.  **Bronze (Raw - Web Scraping):** Desenvolvi um extrator customizado em Python que realiza o **scraping** do portal de dados abertos da PRF. O script automatiza a navegação, identifica os links de download por ano e realiza a ingestão dos arquivos CSV brutos, eliminando o trabalho manual e garantindo a escalabilidade do pipeline.
 2.  **Silver (Cleaned):** Limpeza profunda, normalização de encodings (Latin-1 para UTF-8), tratamento de tipos de data e padronização de colunas. Armazenamento eficiente em formato **Apache Parquet**.
 3.  **Gold (Curated):** Unificação de mais de 20 anos de registros em uma única tabela mestra (Single Source of Truth), otimizada para análise volumétrica.
 4.  **Load (Database):** Carga dos dados tratados em um banco de dados **PostgreSQL** orquestrado via **Docker**, permitindo acesso relacional performático.
 
-
-
 ## 🛠️ Tecnologias e Ferramentas
 
+* **Web Scraping:** `requests` / `BeautifulSoup` (ou a biblioteca que usamos)
+* **Linguagem:** Python 3.11
+* **Processamento de Dados:** Pandas
 * **Linguagem:** Python 3.11
 * **Processamento de Dados:** Pandas
 * **Armazenamento Colunar:** Apache Parquet (PyArrow)
